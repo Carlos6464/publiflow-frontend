@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  /* --- Paleta de Cores do PubliFlow --- */
+  
+  /* Rosa Choque (Botões / Destaques) */
+  --brand-primary: #F41958;
+  
+  /* Rosa Hover (Interação) */
+  --brand-secondary: #F23064;
+  
+  /* Preto Suave (Fundo da Tela) */
+  --brand-dark: #1E1E1E;
+  
+  /* Cinza Escuro (Cards, Sidebar, Inputs) */
+  --brand-surface: #333333;
+  
+  /* Texto Secundário (Cinza Claro) */
+  --brand-text: #8C8C8C;
+  
+  /* Branco (Texto Principal) */
+  --brand-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--brand-dark);
+  color: var(--brand-white);
+  /* Garante suavização de fonte */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Opcional: Utilitários manuais caso precise forçar */
+.bg-brand-primary { background-color: var(--brand-primary); }
+.text-brand-primary { color: var(--brand-primary); }
