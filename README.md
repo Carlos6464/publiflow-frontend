@@ -1,20 +1,21 @@
-# PubliFlow - Sistema de Blog Acadêmico
+# PubliFlow - Sistema de Blog Acadêmico (Frontend)
 
-O **PubliFlow** é uma aplicação front-end desenvolvida para facilitar a interação acadêmica através de postagens, permitindo que professores gerenciem conteúdos e alunos consumam informações de forma ágil e intuitiva.
+O **PubliFlow** é uma interface gráfica moderna desenvolvida para facilitar a interação acadêmica através de postagens. A aplicação permite que professores gerenciem conteúdos e que alunos consumam informações de forma ágil e intuitiva.
 
-A aplicação foi construída com foco em performance, responsividade e uma experiência de usuário moderna.
+O projeto foi construído com foco em **performance**, **responsividade** e **facilidade de distribuição** através de containers Docker.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
-O projeto foi desenvolvido utilizando as tecnologias mais recentes do ecossistema React:
+Este projeto utiliza as tecnologias mais recentes do ecossistema React e DevOps:
 
 * **Core:** [Next.js 16](https://nextjs.org/) (App Router)
 * **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+* **Infraestrutura:** [Docker](https://www.docker.com/) & Docker Compose
 * **Estilização:** [Tailwind CSS v4](https://tailwindcss.com/)
 * **Ícones:** [Lucide React](https://lucide.dev/)
-* **Requisições HTTP:** [Axios](https://axios-http.com/)
+* **Cliente HTTP:** [Axios](https://axios-http.com/)
 * **Autenticação:** Context API + [Nookies](https://github.com/maticzav/nookies) (Gerenciamento de Cookies)
 * **Feedback Visual:** [Sonner](https://sonner.emilkowal.ski/) (Toasts) e [SweetAlert2](https://sweetalert2.github.io/) (Modais)
 
@@ -22,31 +23,33 @@ O projeto foi desenvolvido utilizando as tecnologias mais recentes do ecossistem
 
 ## 🏗 Arquitetura da Aplicação
 
-O projeto segue a arquitetura moderna do **Next.js App Router**, organizando rotas e lógicas de forma modular.
+A arquitetura segue o modelo modular do **Next.js App Router**:
 
-### Estrutura de Pastas Principal
-* `/app`: Contém todas as rotas (pages), layouts e componentes globais.
-    * `/admin`: Rotas protegidas exclusivas para professores (Dashboard, CRUD de posts).
-    * `/feed`: Rota principal de visualização de conteúdo para alunos e professores.
-    * `/login`: Tela única para autenticação e cadastro.
-* `/contexts`: Gerenciamento de estado global (Autenticação).
-* `/service`: Configuração do cliente HTTP (Axios).
-* `/middleware.ts`: Controle de segurança e redirecionamento de rotas no servidor.
+### 📂 Estrutura de Pastas
+* `/app`: Contém todas as rotas (pages), layouts e componentes.
+    * `/admin`: Área protegida para professores (Dashboard, CRUD de posts).
+    * `/feed`: Feed de notícias para alunos e professores.
+    * `/login`: Tela unificada de autenticação e cadastro.
+* `/contexts`: Gerenciamento de estado global (Autenticação e Sessão).
+* `/service`: Configuração do cliente HTTP (Axios) com suporte a variáveis de ambiente.
+* `middleware.ts`: Camada de segurança que intercepta rotas e redireciona usuários não autenticados.
 
-### Fluxo de Autenticação e Segurança
-1.  **Middleware (`middleware.ts`):** Intercepta as requisições. Se um usuário não autenticado tentar acessar `/feed` ou `/admin`, ele é redirecionado para o login. Se um aluno tentar acessar a área `/admin`, é redirecionado para o feed.
-2.  **Contexto (`AuthContext.tsx`):** Gerencia o estado do usuário, login e logout, persistindo o token JWT e o papel do usuário (role) em cookies para manter a sessão ativa.
-3.  **API Service:** O Axios intercepta as requisições e injeta automaticamente o token Bearer nos cabeçalhos.
+### 🔐 Fluxo de Autenticação
+1.  **Middleware:** Protege as rotas `/feed` e `/admin`. Se o token não existir, redireciona para o login. Impede que alunos acessem a área administrativa.
+2.  **Contexto (AuthContext):** Persiste o token JWT e o papel do usuário (*role*) em cookies para manter a sessão ativa.
+3.  **API Service:** Injeta automaticamente o token Bearer em todas as requisições HTTP feitas ao backend.
 
 ---
 
-## ⚙️ Setup Inicial e Instalação
+## ⚙️ Setup e Instalação com Docker
+
+Para rodar esta aplicação, você não precisa instalar Node.js localmente, apenas o Docker.
 
 ### Pré-requisitos
-* Node.js (versão 18 ou superior recomendada)
-* Backend da aplicação rodando (Padrão: `http://localhost:3333`)
+* [Docker](https://www.docker.com/get-started) e [Docker Compose](https://docs.docker.com/compose/install/) instalados.
+* Backend da aplicação rodando (acessível via rede).
 
-### Passo a Passo
+### 🚀 Passo a Passo
 
 1.  **Clone o repositório:**
     ```bash
@@ -54,83 +57,73 @@ O projeto segue a arquitetura moderna do **Next.js App Router**, organizando rot
     cd publiflow-frontend
     ```
 
-2.  **Instale as dependências:**
+2.  **Verifique a Configuração (Docker Compose):**
+    O arquivo `docker-compose.yml` já está configurado para conectar ao backend.
+    
+    * A variável `NEXT_PUBLIC_API_URL` define onde o frontend (navegador e servidor Next.js) deve buscar os dados.
+    * **Padrão:** `http://host.docker.internal:3333/api` (Ideal para quando o backend roda na mesma máquina host, fora da rede deste container).
+
+3.  **Subir a Aplicação:**
+    Execute o comando para construir a imagem e iniciar o container:
     ```bash
-    npm install
-    # ou
-    yarn install
+    docker-compose up -d --build
     ```
 
-3.  **Configuração da API:**
-    Verifique o arquivo `service/api.ts`. Por padrão, ele aponta para o localhost. Se necessário, ajuste a `baseURL`:
-    ```typescript
-    export const api = axios.create({
-      baseURL: 'http://localhost:3333/api',
-    });
-    ```
+4.  **Acessar:**
+    Abra seu navegador e acesse:
+    [http://localhost:3000](http://localhost:3000)
 
-4.  **Execute o projeto:**
+5.  **Parar a Aplicação:**
+    Para encerrar a execução e remover o container:
     ```bash
-    npm run dev
+    docker-compose down
     ```
-
-5.  **Acesse:**
-    Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 ---
 
-## 📖 Guia de Uso Detalhado
+## 📖 Guia de Uso
 
 ### 1. Login e Cadastro (`/login`)
-A tela inicial permite o acesso de dois tipos de usuários. Utilize as abas superiores para alternar:
-* **Sou Aluno:** Acesso para visualizar o feed e editar perfil.
-* **Sou Professor:** Acesso administrativo para criar, editar e excluir postagens.
-* *Cadastro:* Clique em "Cadastre-se" para criar uma nova conta. O sistema detecta automaticamente o tipo de usuário com base na aba selecionada.
+Acesse a plataforma utilizando o sistema de abas:
+* **Sou Aluno:** Acesso ao feed de notícias e perfil.
+* **Sou Professor:** Acesso ao painel administrativo.
+* **Cadastro:** Clique em "Cadastre-se" para criar uma nova conta. O sistema atribui automaticamente o perfil (Aluno ou Professor) baseado na aba ativa no momento do cadastro.
 
 ### 2. Feed de Notícias (`/feed`)
-Disponível para todos os usuários autenticados.
-* **Visualização:** Lista de cards com imagem, título, data e resumo.
-* **Busca:** Barra de pesquisa em tempo real (Debounced) para filtrar postagens.
-* **Paginação:** Navegação entre páginas de conteúdo.
-* **Menu de Usuário:** No canto superior direito, acesso rápido ao Perfil e Logout.
+Disponível para todos os usuários logados.
+* Visualize os últimos posts com imagens e resumos.
+* Utilize a **barra de busca** para filtrar conteúdos em tempo real.
+* Navegue entre as páginas de conteúdo através da paginação.
 
 ### 3. Painel Administrativo (`/admin`)
 *Exclusivo para Professores.*
-* **Dashboard:** Visão geral das postagens criadas pelo professor logado.
-* **Status:** Indica visualmente se o post é "Publicado" (Verde) ou "Rascunho" (Amarelo).
-* **Ações:**
-    * **Criar:** Botão "Nova Postagem".
-    * **Editar:** Ícone de lápis para alterar conteúdo e imagem.
-    * **Excluir:** Ícone de lixeira (com confirmação via SweetAlert2).
+* **Dashboard:** Visualize e gerencie suas postagens.
+* **Status:** Controle a visibilidade dos posts ("Publicado" ou "Rascunho").
+* **Criar/Editar:** Editor completo para criação de conteúdo e upload de imagem de capa.
+* **Excluir:** Remoção de posts com confirmação de segurança.
 
-### 4. Gerenciamento de Postagem (`/admin/post/...`)
-* **Formulário:** Criação e edição de posts.
-* **Upload:** Suporte para upload de imagem de capa com pré-visualização.
-* **Visibilidade:** Toggle para definir se o post aparece ou não no feed dos alunos.
-
-### 5. Perfil (`/profile`)
-Permite a atualização de dados cadastrais como Nome, Email e Telefone.
+### 4. Perfil (`/profile`)
+Gerencie seus dados pessoais, como Nome, Email e Telefone.
 
 ---
 
-## 🎨 Design System e Estilização
+## 🎨 Estilização
 
-O projeto utiliza um tema escuro (Dark Mode) nativo configurado via Tailwind CSS.
+O projeto utiliza um **Tema Escuro (Dark Mode)** nativo, configurado via Tailwind CSS.
 
-* **Paleta de Cores (definida em `globals.css`):**
-    * `brand-primary`: #F41958 (Rosa destaque)
-    * `brand-dark`: #1E1E1E (Fundo principal)
-    * `brand-surface`: #333333 (Cards e modais)
-* **Responsividade:** Layout totalmente adaptável para Mobile, Tablet e Desktop.
+**Variáveis de CSS (`globals.css`):**
+* `brand-primary`: `#F41958` (Rosa Destaque)
+* `brand-dark`: `#1E1E1E` (Fundo)
+* `brand-surface`: `#333333` (Elementos de Interface)
 
 ---
 
 ## 🤝 Contribuição
 
 1.  Faça um Fork do projeto.
-2.  Crie uma Branch para sua Feature (`git checkout -b feature/MinhaFeature`).
-3.  Faça o Commit (`git commit -m 'Adicionando nova feature'`).
-4.  Faça o Push (`git push origin feature/MinhaFeature`).
+2.  Crie uma Branch (`git checkout -b feature/NovaFeature`).
+3.  Faça o Commit (`git commit -m 'Adiciona Nova Feature'`).
+4.  Faça o Push (`git push origin feature/NovaFeature`).
 5.  Abra um Pull Request.
 
 ---
