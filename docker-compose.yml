@@ -1,0 +1,14 @@
+services:
+  publiflow-frontend:
+    container_name: publiflow-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Mude a URL abaixo para onde seu backend está rodando.
+      # Se for na sua máquina local, 'host.docker.internal' geralmente resolve.
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:3333/api

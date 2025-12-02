@@ -1,14 +1,13 @@
 import axios from 'axios';
 import { parseCookies } from 'nookies';
 
-// Pega os cookies logo no início para configurar a instância
 const { 'publiflow.token': token } = parseCookies();
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3333/api', // Sua API local
+  // Tenta usar a variável de ambiente; se não achar, usa o localhost padrão
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333/api',
 });
 
-// Se tiver token, já coloca no cabeçalho de todas as requisições
 if (token) {
   api.defaults.headers['Authorization'] = `Bearer ${token}`;
 }
